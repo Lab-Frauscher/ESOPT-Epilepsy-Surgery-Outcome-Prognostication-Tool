@@ -45,18 +45,6 @@ the published tool is fine, but reuse, redistribution, or retraining from
 the trained model weights or methodology requires written permission, and
 any use must cite the manuscript listed at the top of this README.
 
-`js/model_weights.js` base64-encodes the trained weights
-(`MODEL_WEIGHTS_B64`, decoded at runtime with `atob()`) so they aren't
-plainly readable via a quick view-source. **Be aware this is a deterrent,
-not real security** — the browser must decode and use the actual weight
-values to compute a score, so anyone willing to open devtools and run
-`atob(MODEL_WEIGHTS_B64)` (or just inspect the JS variable at runtime) can
-recover them. There is no way to truly hide a "secret" that a static,
-client-side page must execute — genuine protection would require moving
-scoring to a server-side API instead of a client-side-only GitHub Pages
-site, which is a larger architectural change. The `LICENSE` terms are the
-actual (legal, not technical) protection against reuse.
-
 ## Disclaimer
 
 No medical advice. This tool provides research/educational estimates only,
