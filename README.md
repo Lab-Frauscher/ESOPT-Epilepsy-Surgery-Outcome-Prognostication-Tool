@@ -13,7 +13,7 @@ ensemble model described in:
 
 **Live scope of this build:** Mesial Temporal Lobe Epilepsy (MTLE), 4
 modalities, 10 features. Built to scale to additional epilepsy types and
-modalities without a rewrite (see [Scaling up](#scaling-up)).
+modalities without a rewrite.
 
 > ⚠️ **Research tool, not a diagnostic device.** Scores are produced by the
 > linear-SVM ensemble in [`js/model_weights.js`](js/model_weights.js), trained
