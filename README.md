@@ -75,78 +75,7 @@ The trained model itself (feature vocabulary in `vocabs`, SVM weights in
 `features`, and the `cutoff_sens80` threshold in `meta`) lives in
 [`js/model_weights.js`](js/model_weights.js).
 
-## Plugging in your trained weights
 
-As of the current `js/model_weights.js`, weights come from a `train_and_export_model.m`
-script (per its header comment) that:
-
-1. Trains one `fitcsvm` model per feature **once on the full cohort**
-   (class-weighted, not LOSO-frozen), rather than freezing a single
-   leave-one-subject-out fold.
-2. Computes each feature's probability via the logistic transform
-   `p = 1/(1+exp(-s))` and a patient-level classification cutoff
-   (`meta.cutoff_sens80`) tuned for 80% sensitivity on the training scores.
-3. Writes `model_weights.js` directly as plain JSON —
-   `const MODEL_WEIGHTS = {...};` — ready to drop into `js/`.
-
-> **Note:** `dev/matlab/generate_features_and_export_weights.m` in this repo
-> is the older LOSO-CV + feature-importance analysis script (useful for
-> validation/importance reporting) and does **not** currently produce this
-> exact export format. If you want the deployment-export script itself
-> checked into `dev/matlab/`, share it and it'll be added so future weight
-> refreshes stay reproducible from this repo.
-
-Copy the generated `model_weights.js` into this repo's `js/` folder,
-overwriting the previous one — no manual conversion step is needed.
-
-To re-check a newly dropped-in `model_weights.js` against the test cohort,
-run [`dev/test/evaluate_esopt.ps1`](dev/test/evaluate_esopt.ps1) (PowerShell,
-requires the `ImportExcel` module: `Install-Module ImportExcel -Scope CurrentUser`).
-It reimplements the exact same scoring logic as `js/app.js` and reports
-accuracy/sensitivity/specificity against `Outcome_value < 1` as ground truth.
-
-## Running locally
-
-This is a static site with no build step or server-side code. Open
-`index.html` directly in a browser, or serve the folder locally, e.g.:
-
-```powershell
-python -m http.server 8000
-```
-
-Then visit `http://localhost:8000`.
-
-## Deploying on GitHub Pages
-
-1. Push this folder to a GitHub repository (e.g. `esopt` or
-   `epilepsy-surgery-outcome-tool`). `.gitignore` already excludes `dev/`
-   (MATLAB source, `.mat` outputs, and the patient-level test spreadsheet),
-   so only the deployable site files get pushed.
-2. In the repo, go to **Settings → Pages**.
-3. Under **Build and deployment**, set **Source** to `Deploy from a branch`,
-   branch `main`, folder `/ (root)`.
-4. Save — GitHub will publish the site at
-   `https://<your-username>.github.io/<repo-name>/`.
-
-No CI, secrets, or backend are required since everything runs client-side.
-
-## Scaling up
-
-The config is fully data-driven so growth doesn't require touching the
-scoring engine:
-
-- **New epilepsy type** (e.g. neocortical temporal, frontal lobe,
-  generalized): add a new key to `MODEL_VERSIONS` in `js/config.js` with its
-  own `modalities` array and `status: "active"`. It will automatically appear
-  in the "Epilepsy Type" dropdown and render its own form.
-- **New modality/feature for an existing type**: push a new entry into that
-  type's `modalities` (or a modality's `features`) array in `js/config.js`,
-  add a matching entry to `MODEL_WEIGHTS.features` in `js/model_weights.js`
-  (with the trained `beta`/`bias`/`mu`/`sigma`), and optionally a friendly
-  label in `FEATURE_DISPLAY`/`CATEGORY_LABELS`. The UI renders whatever is in
-  the config.
-- Epilepsy types not yet implemented are listed with `status: "coming_soon"`
-  and appear disabled in the dropdown as a visible roadmap marker.
 
 ## License, citation & weight protection
 
