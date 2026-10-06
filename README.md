@@ -36,20 +36,6 @@ LICENSE              (usage restrictions + citation requirement)
 README.md
 ```
 
-Everything else (MATLAB source, its `.mat` outputs, evaluation scripts, and
-the patient-level test spreadsheet) lives under `dev/`, which is listed in
-[`.gitignore`](.gitignore) and is never pushed to the public repo:
-
-```
-dev/matlab/generate_features_and_export_weights.m
-dev/matlab/deploy_model_iter*.mat
-dev/test/evaluate_esopt.ps1
-dev/test/evaluate_esopt.py
-dev/test/Patient_features_mesial_temporal_lobe_All_centers_22March26.xlsm
-```
-
-**Do not remove `dev/` from `.gitignore`** — the test spreadsheet contains
-patient-level research data and must not be published in the public repo.
 
 ## How the score is computed
 
