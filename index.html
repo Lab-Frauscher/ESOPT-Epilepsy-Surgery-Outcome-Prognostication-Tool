@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ESOPT &mdash; Epilepsy Surgery Outcome Prognostication Tool</title>
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <h1>ESOPT <span class="header-sub">Epilepsy Surgery Outcome Prognostication Tool</span></h1>
+  </div>
+</header>
+
+<main class="container">
+
+  <div class="demo-banner">
+    <strong>Research tool, not a diagnostic device:</strong> Scores are produced by the linear-SVM ensemble in
+    <code>js/model_weights.js</code>, trained on a single-center/consortium research cohort (see manuscript for
+    validation performance). This tool has not been independently, prospectively validated for clinical
+    decision-making and is not a substitute for professional medical advice.
+  </div>
+
+  <div class="epilepsy-type-row">
+    <label for="epilepsyType">Epilepsy Type</label>
+    <select id="epilepsyType"></select>
+  </div>
+
+  <div class="calc-grid">
+
+    <section class="inputs-panel" id="inputsPanel">
+      <!-- Modality sections are rendered here by app.js -->
+    </section>
+
+    <section class="results-panel">
+      <div class="actions-row">
+        <button id="calculateBtn" class="btn btn-primary">Calculate</button>
+      </div>
+
+      <div id="resultsBox" class="results-box results-empty">
+        <p>Fill in all fields and press <strong>Calculate</strong> to see the predicted 1-year seizure-freedom score.</p>
+      </div>
+
+      <div class="reference-box">
+        <h3>Reference</h3>
+        <p>
+          Thomas, J., Abdallah, C., Aung, T., Bosque-Varela, P., Doležalová, I., Parikh, P., Wadi, L., Jaber, K.,
+          Cai, Z., Ho, A. and Moye, M.K., 2026. Hierarchical integration of multimodal clinical data to predict
+          epilepsy surgery outcome. <em>medRxiv</em>, pp.2026-05.
+          <a href="https://www.medrxiv.org/content/10.64898/2026.05.05.26352481v1" target="_blank" rel="noopener noreferrer">
+            https://www.medrxiv.org/content/10.64898/2026.05.05.26352481v1
+          </a>
+        </p>
+        <p>If you use this tool, its methodology, or its results, please cite the manuscript above.</p>
+      </div>
+
+      <div class="disclaimer-box">
+        <h3>Disclaimer</h3>
+        <p>
+          No Medical Advice. This tool provides research-based, educational estimates only and does not create a
+          medical professional-patient relationship or constitute a diagnosis, opinion, or treatment recommendation.
+          It is not a substitute for evaluation by a qualified physician. Use of this tool is at your own risk; the
+          authors accept no liability for decisions made based on its output.
+        </p>
+        <p>
+          &copy; 2026 The authors. All rights reserved. The trained model weights and methodology are provided for
+          demonstration/reference only &mdash; see <code>LICENSE</code> for usage terms. Reuse, redistribution, or
+          retraining from the published weights without written permission is prohibited.
+        </p>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<footer class="site-footer">
+  <p>ESOPT &middot; Open source on GitHub &middot; Built for research/educational use only</p>
+</footer>
+
+<script src="js/config.js"></script>
+<script src="js/model_weights.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
