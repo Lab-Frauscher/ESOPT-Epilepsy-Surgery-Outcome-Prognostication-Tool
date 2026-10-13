@@ -57,8 +57,8 @@ const FEATURE_DISPLAY = {
 const CATEGORY_LABELS = {
   Seizures: {
     FBTC: "Focal to Bilateral Tonic-Clonic (FBTC)",
-    FIA: "Focal Impaired Awareness (FIA)",
-    FA: "Focal Aware (FA)"
+    FIA: "Focal Impaired Conciousness (FIC)",
+    FA: "Focal Preserved Conciousness (FPC)"
   },
   MRI1: {
     lesional: "Lesional",
