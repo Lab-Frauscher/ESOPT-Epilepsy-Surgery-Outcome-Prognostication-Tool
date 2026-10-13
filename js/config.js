@@ -44,9 +44,48 @@ const FEATURE_DISPLAY = {
   First_symptom_main: { label: "First Symptom" },
   Rest_of_the_symptoms_main: { label: "Rest of the Symptoms" },
   Postictal_symptom: { label: "Postictal Symptoms" },
-  Spike_dist: { label: "Abnormality Spike Distance", step: 0.01, placeholder: "e.g., 0.35" },
-  Gamma_dist: { label: "Abnormal Spike-Gamma Distance", step: 0.01, placeholder: "e.g., 0.35" },
-  SPM: { label: "Spatial Perturbation Map (SPM)", step: 0.01, placeholder: "e.g., 0.60" },
+  Spike_dist: {
+    label: "Abnormality Spike Distance",
+    step: "any",
+    min: 0,
+    max: 100,
+    placeholder: "e.g., 35",
+    reference: {
+      label: "Abnormality Distance",
+      order: 3,
+      full:
+        "Gallagher et al., 2024. The sixth sense: how much does interictal intracranial EEG add to " +
+        "determining the focality of epileptic networks?. Brain Communications, 6(5), p.fcae320."
+    }
+  },
+  Gamma_dist: {
+    label: "Abnormal Spike-Gamma Distance",
+    step: "any",
+    min: 0,
+    max: 100,
+    placeholder: "e.g., 35",
+    reference: {
+      label: "Spike-Gamma",
+      order: 1,
+      full:
+        "Thomas et al., 2023. A subpopulation of spikes predicts successful epilepsy surgery outcome. " +
+        "Annals of Neurology, 93(3), pp.522-535."
+    }
+  },
+  SPM: {
+    label: "Spatial Perturbation Map (SPM)",
+    step: "any",
+    min: 0,
+    max: 1,
+    placeholder: "e.g., 0.60",
+    reference: {
+      label: "SPM",
+      order: 2,
+      full:
+        "Jaber et al., 2024. A spatial perturbation framework to validate implantation of the " +
+        "epileptogenic zone. Nature Communications, 15(1), p.5253."
+    }
+  },
   MRI1: { label: "Presence of Lesion" },
   MRI2: { label: "Region of Interest" },
   MRI3: { label: "Lobe of Interest" }

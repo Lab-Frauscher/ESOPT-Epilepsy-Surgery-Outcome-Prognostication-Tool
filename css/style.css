@@ -142,6 +142,13 @@ body {
   background: #fff;
 }
 
+.field-row select:disabled,
+.field-row input[type="number"]:disabled {
+  background: #eef1f1;
+  color: var(--muted);
+  cursor: not-allowed;
+}
+
 .checkbox-group {
   display: flex;
   flex-wrap: wrap;

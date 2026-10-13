@@ -19,6 +19,7 @@
   const inputsPanel = document.getElementById("inputsPanel");
   const resultsBox = document.getElementById("resultsBox");
   const calculateBtn = document.getElementById("calculateBtn");
+  const featureReferencesBox = document.getElementById("featureReferencesBox");
 
   function fieldId(featureName) {
     return `f_${featureName}`;
@@ -55,10 +56,46 @@
     epilepsyTypeSelect.value = "MTLE";
   }
 
+  // ---- Render the per-feature citation list (results panel, above disclaimer) -
+  // Pulls from FEATURE_DISPLAY[...].reference for every feature in the active
+  // epilepsy type, so it stays in sync as modalities/features are added later.
+  function renderFeatureReferences(versionKey) {
+    if (!featureReferencesBox) return;
+    const version = MODEL_VERSIONS[versionKey];
+    featureReferencesBox.innerHTML = "";
+
+    if (!version || version.status !== "active") return;
+
+    const cited = [];
+    version.modalities.forEach((modality) => {
+      modality.features.forEach((featureName) => {
+        const display = FEATURE_DISPLAY[featureName];
+        if (display && display.reference) cited.push(display);
+      });
+    });
+
+    if (cited.length === 0) return;
+
+    // Display in curated citation order (reference.order), not feature/form order.
+    cited.sort((a, b) => (a.reference.order ?? 0) - (b.reference.order ?? 0));
+
+    const heading = document.createElement("h3");
+    heading.textContent = "Feature References";
+    featureReferencesBox.appendChild(heading);
+
+    cited.forEach((display) => {
+      const p = document.createElement("p");
+      const refLabel = display.reference.label || display.label;
+      p.innerHTML = `<strong>${refLabel}:</strong> ${display.reference.full}`;
+      featureReferencesBox.appendChild(p);
+    });
+  }
+
   // ---- Render the input form for the selected epilepsy type ------------------
   function renderForm(versionKey) {
     const version = MODEL_VERSIONS[versionKey];
     inputsPanel.innerHTML = "";
+    renderFeatureReferences(versionKey);
 
     if (!version || version.status !== "active") {
       inputsPanel.innerHTML = `<p class="empty-note">No model is available yet for this epilepsy type.</p>`;
@@ -137,6 +174,8 @@
           const input = document.createElement("input");
           input.type = "number";
           input.step = display.step || "any";
+          if (display.min !== undefined) input.min = display.min;
+          if (display.max !== undefined) input.max = display.max;
           input.id = fieldId(featureName);
           input.dataset.feature = featureName;
           if (display.placeholder) input.placeholder = display.placeholder;
@@ -147,7 +186,40 @@
       });
 
       inputsPanel.appendChild(section);
+
+      if (modality.id === "mri") {
+        wireMriLesionDependency();
+      }
     });
+  }
+
+  // ---- MRI1 (presence of lesion) drives MRI2/MRI3 -----------------------------
+  // When the lesion question is answered "normal", region/lobe of interest are
+  // not meaningful: freeze those two selects and force them internally to
+  // "normal/unspecific" (MRI2) / "uncertain" (MRI3) so scoring stays consistent.
+  // Re-selecting any non-"normal" answer unfreezes them for the user to choose.
+  function wireMriLesionDependency() {
+    const mri1 = document.getElementById(fieldId("MRI1"));
+    const mri2 = document.getElementById(fieldId("MRI2"));
+    const mri3 = document.getElementById(fieldId("MRI3"));
+    if (!mri1 || !mri2 || !mri3) return;
+
+    function applyLesionState() {
+      const isNormal = mri1.value === "normal";
+      if (isNormal) {
+        mri2.value = "normal/unspecific";
+        mri3.value = "uncertain";
+      } else if (mri2.disabled) {
+        // Coming back from the frozen "normal" state -- let the user choose again.
+        mri2.value = "";
+        mri3.value = "";
+      }
+      mri2.disabled = isNormal;
+      mri3.disabled = isNormal;
+    }
+
+    mri1.addEventListener("change", applyLesionState);
+    applyLesionState();
   }
 
   // ---- Feature-level prediction (linear-SVM decision score -> probability) ---
