@@ -193,33 +193,39 @@
     });
   }
 
-  // ---- MRI1 (presence of lesion) drives MRI2/MRI3 -----------------------------
-  // When the lesion question is answered "normal", region/lobe of interest are
-  // not meaningful: freeze those two selects and force them internally to
-  // "normal/unspecific" (MRI2) / "uncertain" (MRI3) so scoring stays consistent.
-  // Re-selecting any non-"normal" answer unfreezes them for the user to choose.
+  // ---- MRI1/MRI2/MRI3 mutual "normal" dependency ------------------------------
+  // Each MRI question has a "nothing of interest" neutral answer: "normal"
+  // (presence of lesion), "normal/unspecific" (region of interest), "uncertain"
+  // (lobe of interest). Selecting any one of these three neutral answers means
+  // the other two questions are not meaningful, so they get frozen and forced
+  // to their own neutral answer so scoring stays consistent. Changing the
+  // selected field away from its neutral answer unfreezes the other two for
+  // the user to choose again.
   function wireMriLesionDependency() {
-    const mri1 = document.getElementById(fieldId("MRI1"));
-    const mri2 = document.getElementById(fieldId("MRI2"));
-    const mri3 = document.getElementById(fieldId("MRI3"));
-    if (!mri1 || !mri2 || !mri3) return;
+    const fields = [
+      { el: document.getElementById(fieldId("MRI1")), neutral: "normal" },
+      { el: document.getElementById(fieldId("MRI2")), neutral: "normal/unspecific" },
+      { el: document.getElementById(fieldId("MRI3")), neutral: "uncertain" }
+    ];
+    if (fields.some((f) => !f.el)) return;
 
-    function applyLesionState() {
-      const isNormal = mri1.value === "normal";
-      if (isNormal) {
-        mri2.value = "normal/unspecific";
-        mri3.value = "uncertain";
-      } else if (mri2.disabled) {
-        // Coming back from the frozen "normal" state -- let the user choose again.
-        mri2.value = "";
-        mri3.value = "";
+    function applyFrom(source) {
+      const others = fields.filter((f) => f.el !== source.el);
+      if (source.el.value === source.neutral) {
+        others.forEach((f) => {
+          f.el.value = f.neutral;
+          f.el.disabled = true;
+        });
+      } else if (others.some((f) => f.el.disabled)) {
+        // Coming back from a frozen state this field caused -- let the user choose again.
+        others.forEach((f) => {
+          f.el.value = "";
+          f.el.disabled = false;
+        });
       }
-      mri2.disabled = isNormal;
-      mri3.disabled = isNormal;
     }
 
-    mri1.addEventListener("change", applyLesionState);
-    applyLesionState();
+    fields.forEach((f) => f.el.addEventListener("change", () => applyFrom(f)));
   }
 
   // ---- Feature-level prediction (linear-SVM decision score -> probability) ---
