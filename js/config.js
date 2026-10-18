@@ -130,6 +130,7 @@ const CATEGORY_LABELS = {
     "Autonomic phenomena": "Autonomic",
     "Cognitive phenomena": "Cognitive",
     "Complex motor phenomena": "Complex Motor",
+    "Elementary motor phenomena": "Elementary Motor",
     "Sensory phenomena": "Sensory"
   },
   Rest_of_the_symptoms_main: {
@@ -141,6 +142,16 @@ const CATEGORY_LABELS = {
     "Sensory phenomena": "Sensory"
   },
   NA: "Not documented / NA"
+};
+
+// UI-only checkbox options that are not part of the trained model's
+// vocabulary (MODEL_WEIGHTS.vocabs). Shown to the user as their own option,
+// but scored as the `mapsTo` category since the saved model has no dedicated
+// weight for them. E.g. the "First Symptom" model has no "Elementary motor
+// phenomena" category (unlike "Rest of the Symptoms"), so it is folded into
+// "Complex motor phenomena" at scoring time.
+const EXTRA_CATEGORY_OPTIONS = {
+  First_symptom_main: [{ value: "Elementary motor phenomena", mapsTo: "Complex motor phenomena" }]
 };
 
 // Features rendered as checkboxes (multiple categories selectable at once),

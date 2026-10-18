@@ -150,6 +150,21 @@
             optLabel.appendChild(document.createTextNode(categoryLabel(featureName, comp)));
             group.appendChild(optLabel);
           });
+
+          // UI-only options not in the model's vocab (see EXTRA_CATEGORY_OPTIONS
+          // in config.js) -- shown as a normal checkbox but scored as `mapsTo`.
+          (EXTRA_CATEGORY_OPTIONS[featureName] || []).forEach((extra) => {
+            const optLabel = document.createElement("label");
+            optLabel.className = "checkbox-option";
+            const cb = document.createElement("input");
+            cb.type = "checkbox";
+            cb.value = extra.value;
+            cb.dataset.feature = featureName;
+            cb.dataset.mapsTo = extra.mapsTo;
+            optLabel.appendChild(cb);
+            optLabel.appendChild(document.createTextNode(categoryLabel(featureName, extra.value)));
+            group.appendChild(optLabel);
+          });
           row.appendChild(group);
         } else if (weightEntry.type === "single_cat") {
           const select = document.createElement("select");
@@ -285,9 +300,11 @@
 
         if (w.type === "multi_cat") {
           const container = document.getElementById(fieldId(featureName));
+          // Extra (non-vocab) options carry a data-maps-to value; translate
+          // them to the real model category here so scoring is unaffected.
           const selected = Array.from(
             container.querySelectorAll('input[type="checkbox"]:checked')
-          ).map((cb) => cb.value);
+          ).map((cb) => cb.dataset.mapsTo || cb.value);
           if (selected.length === 0) {
             missing.push(display.label);
           } else {
